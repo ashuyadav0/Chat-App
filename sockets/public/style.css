@@ -156,3 +156,19 @@ progress {
   opacity: 0;
   transition: 200ms ease-in-out;
 }
+
+#player {
+  border-radius: 4px;
+  box-shadow: 5px 5px 15px #777777;
+  display: block;
+}
+
+.url_yt {
+  color: #3298dc;
+  cursor: pointer;
+  transition: 2s;
+}
+
+.url_yt:hover {
+  border-bottom: 0.2px solid #3298dc;
+}

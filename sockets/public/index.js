@@ -106,6 +106,7 @@ const sendMessage = (evt, status) => {
       const content = parent.dataset.content;
       const currentlyChat = document.querySelector(`#${content}`);
       const isChatGeneral = content === CHAT_GENERAL;
+      
       const infoMensaje = {
         idOrigen: user.dataset.iduser,
         idOrigenHTML: user.dataset.idhtml,
@@ -113,8 +114,11 @@ const sendMessage = (evt, status) => {
         idDestinoHTML: content,
         userOrigen: user.value,
         userDestino: isChatGeneral ? CHAT_GENERAL : parent.innerText,
-        message: message.value
+        message:  (onMessageSent(message.value)[0] === false) ? onMessageSent(message.value)[1] : onMessageSent(message.value)[1]
       };
+
+      onMessageSent(message.value)
+
       if (content !== CHAT_GENERAL) {
         const color = document.querySelector(`#userConnected .chatUser[data-idhtml='${user.dataset.idhtml}']`).style.color;
         const messageSend = document.querySelector(`.containerChats #${content}`);
@@ -337,3 +341,53 @@ const generateIDHtml = () => new Date().getTime().toString().split('').map(i => 
  * @description Espera a que este la página completamente cargada
  */
 document.addEventListener("DOMContentLoaded", load);
+
+/**
+ * Ernest - Level Obsidian
+ * Crearemos un reporoductor de YouTube al enviar una url por el chat
+ */// Inicializa la variable del reproductor
+
+var player;
+
+// Cuando la API de YouTube esté lista
+function onYouTubeIframeAPIReady() {
+  // Crea el objeto del reproductor
+  player = new YT.Player('player', {
+    height: '360',
+    width: '640',
+    videoId: '', // Aquí irá el ID del video de YouTube
+    events: {
+      'onReady': onPlayerReady
+    }
+  });
+}
+
+/**
+ * Cuando el reproductor esté listo
+  */
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+document.getElementsByClassName('url_yt')[0].addEventListener('click', () => {
+  // document.getElementById('player').style.display="block";
+})
+
+
+
+/**
+ * Cuando se envia un mensaje comprobaremos si es una url de youtube nos guardara el id del video
+ */
+function onMessageSent(message) {
+  let youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
+  let youtubeUrlMatch = message.match(youtubeUrlPattern);
+  
+  if (youtubeUrlMatch) {
+    player.stopVideo();
+    let videoId = youtubeUrlMatch[1];
+    player.loadVideoById(videoId);
+    let messageHTMl = '<span class="url_yt">' + message + '</span>'
+    return [true, messageHTMl]
+  }
+  return [false, message]
+}
