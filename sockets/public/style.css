@@ -160,7 +160,7 @@ progress {
 #player {
   border-radius: 4px;
   box-shadow: 5px 5px 15px #777777;
-  display: block;
+  display: none;
 }
 
 .url_yt {

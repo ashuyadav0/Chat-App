@@ -9,6 +9,7 @@ let webrtc = null;
 const CHAT_GENERAL = 'chatGeneral';
 const LENGTH_MIN_USERNAME = 3;
 const EMPTY = 0;
+const URL_YT_ALL = [];
 const LITERAL = {
   sameUser: 'No puedes enviarte un mensaje a ti mismo',
   minSizeUser: `El nombre del usuario debe tener <b>mínimo ${LENGTH_MIN_USERNAME} caracteres</b>`,
@@ -114,11 +115,11 @@ const sendMessage = (evt, status) => {
         idDestinoHTML: content,
         userOrigen: user.value,
         userDestino: isChatGeneral ? CHAT_GENERAL : parent.innerText,
-        message:  (onMessageSent(message.value)[0] === false) ? onMessageSent(message.value)[1] : onMessageSent(message.value)[1]
-      };
-
-      onMessageSent(message.value)
-
+        message: (onMessageSent(message.value)[0] === false) ? onMessageSent(message.value)[1] : onMessageSent(message.value)[1]
+      }
+      
+      URL_YT_ALL.push(onMessageSent(message.value)[2])
+      
       if (content !== CHAT_GENERAL) {
         const color = document.querySelector(`#userConnected .chatUser[data-idhtml='${user.dataset.idhtml}']`).style.color;
         const messageSend = document.querySelector(`.containerChats #${content}`);
@@ -348,7 +349,7 @@ document.addEventListener("DOMContentLoaded", load);
  */// Inicializa la variable del reproductor
 
 var player;
-
+let urlYtAll = []
 // Cuando la API de YouTube esté lista
 function onYouTubeIframeAPIReady() {
   // Crea el objeto del reproductor
@@ -364,15 +365,10 @@ function onYouTubeIframeAPIReady() {
 
 /**
  * Cuando el reproductor esté listo
-  */
+ */
 function onPlayerReady(event) {
-  event.target.playVideo();
+  //event.target.playVideo();
 }
-
-document.getElementsByClassName('url_yt')[0].addEventListener('click', () => {
-  // document.getElementById('player').style.display="block";
-})
-
 
 
 /**
@@ -383,11 +379,11 @@ function onMessageSent(message) {
   let youtubeUrlMatch = message.match(youtubeUrlPattern);
   
   if (youtubeUrlMatch) {
-    player.stopVideo();
     let videoId = youtubeUrlMatch[1];
     player.loadVideoById(videoId);
-    let messageHTMl = '<span class="url_yt">' + message + '</span>'
-    return [true, messageHTMl]
+    document.getElementById('player').style.display = 'block'
+    let messageHTMl = '<span class="url_yt" onclick="onMessageSent(\'' + message + '\')">' + message + '</span>'
+    return [true, messageHTMl, message]
   }
   return [false, message]
 }
