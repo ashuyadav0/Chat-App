@@ -258,10 +258,54 @@ const uploadProgress = data => {
 };
 
 /** 
- * @description Cargamos un fichero y se sube al servidor
- * @param {object} evt Evento implicito en la acción ejecutada
+ * @description Inicialización del chat
  */
-const upload = async evt => {
+const load = () => {
+  const tabGeneral = document.querySelector('#tabGeneral');
+  user = document.querySelector('#user');
+  message = document.querySelector('#message');
+  usersPanel = document.querySelector('#userConnected');
+  notification = document.querySelector('.notification');
+  message.addEventListener('keydown', evt => sendMessage(evt, true));
+  message.addEventListener('keyup', evt => sendMessage(evt, false));
+  user.addEventListener('blur', connectedToServer);
+  tabGeneral.addEventListener('click', selectedChat);
+  uploadFile = document.querySelector('input[type=file]');
+  uploadFile.addEventListener('change', upload);
+};
+
+/** 
+ * Muestra notificaciones en el chat
+ * @param {string} msn Mensaje que se muestra en la notificación
+ * @param {string} type Tipo de mensaje (danger, info, success, warning)
+ * @param {number} timeout Duración de la notificación
+ */
+const notify = (msn = '', type = 'info', timeout = 2000) => {
+  notification.children[0].innerHTML = msn;
+  notification.classList.add(`is-${type}`);
+  notification.classList.remove('hidden');
+  setTimeout(() => {
+    notification.classList.add('hidden');
+    notification.classList.remove(`is-${type}`);
+  }, timeout);
+};
+
+/** 
+ *Generamos un ID para cada usuario
+ */
+const generateIDHtml = () => new Date().getTime().toString().split('').map(i => String.fromCharCode(parseInt(i) + 65)).join('');
+
+/** 
+ * Espera a que este la página completamente cargada
+ */
+document.addEventListener("DOMContentLoaded", load);
+
+
+/**
+ * Ashu - Level Obsidian
+ * Cargamos un fichero y se sube al servidor
+ */
+ const upload = async evt => {
   if (user.value.length >= LENGTH_MIN_USERNAME) {
     const uploadProgress = document.querySelector('#containerProgress');
     uploadProgress.classList.remove('hidden');
@@ -294,50 +338,6 @@ const upload = async evt => {
     notify(LITERAL.minSizeUser, 'danger');
   }
 };
-
-/** 
- * @description Inicialización del chat
- */
-const load = () => {
-  const tabGeneral = document.querySelector('#tabGeneral');
-  user = document.querySelector('#user');
-  message = document.querySelector('#message');
-  usersPanel = document.querySelector('#userConnected');
-  notification = document.querySelector('.notification');
-  message.addEventListener('keydown', evt => sendMessage(evt, true));
-  message.addEventListener('keyup', evt => sendMessage(evt, false));
-  user.addEventListener('blur', connectedToServer);
-  tabGeneral.addEventListener('click', selectedChat);
-  uploadFile = document.querySelector('input[type=file]');
-  uploadFile.addEventListener('change', upload);
-};
-
-/** 
- * @description Muestra notificaciones en el chat
- * @param {string} msn Mensaje que se muestra en la notificación
- * @param {string} type Tipo de mensaje (danger, info, success, warning)
- * @param {number} timeout Duración de la notificación
- */
-const notify = (msn = '', type = 'info', timeout = 2000) => {
-  notification.children[0].innerHTML = msn;
-  notification.classList.add(`is-${type}`);
-  notification.classList.remove('hidden');
-  setTimeout(() => {
-    notification.classList.add('hidden');
-    notification.classList.remove(`is-${type}`);
-  }, timeout);
-};
-
-/** 
- * @description Generamos un ID para cada usuario
- */
-const generateIDHtml = () => new Date().getTime().toString().split('').map(i => String.fromCharCode(parseInt(i) + 65)).join('');
-
-/** 
- * @description Espera a que este la página completamente cargada
- */
-document.addEventListener("DOMContentLoaded", load);
-
 
 /**
  * Ernest - Level Obsidian
